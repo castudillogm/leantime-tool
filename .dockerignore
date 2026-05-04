@@ -7,7 +7,6 @@ reset_pass.php
 Launch Leantime.ps1
 Launch Leantime.bat
 Build Leantime.bat
-composer.lock
 package-lock.json
 storage/logs/*
 storage/framework/cache/*
