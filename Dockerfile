@@ -54,9 +54,14 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+# Set permissions for Leantime folders
+RUN mkdir -p storage/framework/cache/data \
+    && mkdir -p storage/framework/sessions \
+    && mkdir -p storage/framework/views \
+    && mkdir -p storage/logs \
+    && mkdir -p public/userfiles \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 storage public/userfiles
 
 # Expose port
 EXPOSE 80
