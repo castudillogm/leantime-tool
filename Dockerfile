@@ -16,8 +16,11 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Fix Apache MPM error: Disable event/worker and enable prefork
-RUN a2dismod mpm_event mpm_worker || true && a2enmod mpm_prefork
+# AGGRESSIVE FIX for "More than one MPM loaded"
+# We remove the physical files for event and worker MPMs to prevent Apache from loading them
+RUN rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf \
+    && rm -f /etc/apache2/mods-enabled/mpm_worker.load /etc/apache2/mods-enabled/mpm_worker.conf \
+    && a2enmod mpm_prefork || true
 
 # Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
