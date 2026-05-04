@@ -16,6 +16,9 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
+# Fix Apache MPM error: Disable event/worker and enable prefork
+RUN a2dismod mpm_event mpm_worker || true && a2enmod mpm_prefork
+
 # Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install \
@@ -51,5 +54,3 @@ RUN echo "opcache.memory_consumption=256\nopcache.interned_strings_buffer=16\nop
 
 # Expose port 80
 EXPOSE 80
-
-# The base image already has a CMD to start Apache
