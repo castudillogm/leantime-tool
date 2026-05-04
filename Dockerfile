@@ -16,7 +16,11 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
     unzip \
+    git \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
@@ -47,11 +51,14 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Expose port (will be dynamic)
+# Expose port
 EXPOSE 80
 
 # Command to replace ${PORT} in nginx config and start services
