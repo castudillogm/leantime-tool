@@ -1,0 +1,39 @@
+/* Mermaid diagram styling for Copilot */
+.mermaid-diagram {
+    margin: 16px 0;
+    padding: 10px;
+    background-color: var(--color-bg-muted);
+    border-radius: var(--box-radius-large);
+    overflow: auto;
+}
+
+.mermaid {
+    font-family: inherit;
+    text-align: center;
+}
+
+/* Make sure SVG diagrams are responsive */
+.mermaid svg {
+    max-width: 100%;
+    height: auto !important;
+}
+
+/* Improve visibility of diagram elements */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon,
+.mermaid .node path {
+    fill: var(--primary-background);
+    stroke: var(--accent1);
+    stroke-width: 1px;
+}
+
+.mermaid .edgePath .path {
+    stroke: var(--primary-font-color);
+    stroke-width: 1.5px;
+}
+
+.mermaid .label {
+    color: var(--primary-font-color);
+}

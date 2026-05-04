@@ -1,0 +1,14 @@
+.dev
+.env
+node_modules
+vendor
+reset_pass.php
+Launch Leantime.ps1
+Launch Leantime.bat
+Build Leantime.bat
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+.DS_Store
+Thumbs.db

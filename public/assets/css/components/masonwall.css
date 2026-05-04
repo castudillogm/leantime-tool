@@ -1,0 +1,33 @@
+#ideaMason .ticketBox {
+    width: 250px;
+    cursor:move;
+
+    position:absolute;
+}
+
+#ideaMason .ticketBox .ticketBox {
+    position:relative;
+    width:auto;
+    cursor:auto;
+}
+
+#ideaMason .ticketBox:hover {
+    background:var(--kanban-card-hover);
+}
+
+.packery-drop-placeholder {
+    background: var(--main-border-color);
+    opacity:var(--opacity-faint);
+    border: 2px dotted var(--main-border-color);
+    visibility:visible;
+
+
+}
+
+#ideaMason  .sortableTicketList .ticketBox {
+    cursor: default;
+}
+
+.mainIdeaContent {
+    padding-top:10px;
+}
