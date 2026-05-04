@@ -50,8 +50,8 @@ COPY . .
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Expose port (Railway will provide this via PORT env var)
-EXPOSE 80
+# Expose port 8080
+EXPOSE 8080
 
-# Start Nginx and PHP-FPM
-CMD service nginx start && php-fpm
+# Start both services: php-fpm in background and nginx in foreground
+CMD php-fpm -D && nginx -g "daemon off;"
