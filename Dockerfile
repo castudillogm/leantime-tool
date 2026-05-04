@@ -3,6 +3,7 @@ FROM php:8.2-fpm
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     nginx \
+    gettext-base \
     libonig-dev \
     libcurl4-openssl-dev \
     libxml2-dev \
@@ -37,8 +38,8 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 # Add OPcache configuration
 RUN echo "opcache.memory_consumption=256\nopcache.interned_strings_buffer=16\nopcache.max_accelerated_files=20000\nopcache.revalidate_freq=0\nopcache.validate_timestamps=0\nopcache.fast_shutdown=1" > /usr/local/etc/php/conf.d/opcache-optimized.ini
 
-# Copy Nginx config
-COPY nginx.conf /etc/nginx/sites-available/default
+# Copy Nginx config template
+COPY nginx.conf /etc/nginx/nginx.conf.template
 
 # Set working directory
 WORKDIR /var/www/html
@@ -50,8 +51,8 @@ COPY . .
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Expose port 8080
-EXPOSE 8080
+# Expose port (will be dynamic)
+EXPOSE 80
 
-# Start both services: php-fpm in background and nginx in foreground
-CMD php-fpm -D && nginx -g "daemon off;"
+# Command to replace ${PORT} in nginx config and start services
+CMD /bin/bash -c "envsubst '\${PORT}' < /etc/nginx/nginx.conf.template > /etc/nginx/sites-available/default && php-fpm -D && nginx -g 'daemon off;'"
