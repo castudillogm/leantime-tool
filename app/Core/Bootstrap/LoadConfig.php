@@ -148,11 +148,13 @@ class LoadConfig extends LoadConfiguration
                     (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
 
         if (! defined('BASE_URL')) {
-            $scheme = 'https';
-            $host = $_SERVER['HTTP_HOST'] ?? 'leantime-tool-production.up.railway.app';
+            $scheme = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ||
+                      (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
             $appUrl = $scheme . '://' . $host;
             define('BASE_URL', $appUrl);
         }
+
 
         putenv('APP_URL='.$appUrl);
 
