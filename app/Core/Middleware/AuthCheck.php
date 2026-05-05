@@ -52,10 +52,6 @@ class AuthCheck
      */
     public function handle(IncomingRequest $request, Closure $next): Response
     {
-        if (config('is_installed') === false) {
-            return $next($request);
-        }
-
         if ($this->isPublicController($request->getCurrentRoute())) {
             return $next($request);
         }

@@ -252,15 +252,6 @@ class IncomingRequest extends \Illuminate\Http\Request
         $segments = explode('/', $this->decodedPath());
         $segments = array_values(array_filter($segments, fn ($v) => ! is_null($v) && $v !== '' && $v !== 'index.php'));
 
-        $path = $this->getPathInfo();
-        $isAsset = str_contains($path, '/dist/') || str_contains($path, '/assets/') || str_contains($path, '/images/') || str_contains($path, '/theme/');
-
-        // NUCLEAR FIX: If not installed, force the install route to prevent ANY redirect loops
-        // But allow assets to load so the page looks correct
-        if (config('is_installed') === false && !$isAsset) {
-            return ['install'];
-        }
-
         return $segments;
     }
 

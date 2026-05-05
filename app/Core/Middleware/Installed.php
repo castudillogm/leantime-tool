@@ -22,6 +22,48 @@ class Installed
      **/
     public function handle(IncomingRequest $request, Closure $next): Response
     {
+        $session_says = session()->exists('isInstalled') && session('isInstalled');
+
+        // For HTMX and API requests, trust the session -- install state can't change mid-session.
+        // This avoids a cache/DB lookup on every partial request.
+        if ($session_says && ($request->isHtmxRequest() || $request->isApiOrCronRequest())) {
+            return $next($request);
+        }
+
+        $config_says = app()->make(SettingRepository::class)->checkIfInstalled();
+
+        if (! $session_says && ! $config_says) {
+            $this->setUninstalled();
+
+            if (! $response = $this->redirectToInstall($request)) {
+                return $next($request);
+            }
+
+            return $response;
+        }
+
+        if ($session_says && ! $config_says) {
+            $this->setUninstalled();
+
+            if (! $response = $this->redirectToInstall($request)) {
+                return $next($request);
+            }
+
+            return $response;
+        }
+
+        if (! $session_says && $config_says) {
+            $this->setInstalled();
+        }
+
+        self::dispatchEvent('after_install');
+
+        $route = $request->getCurrentRoute();
+
+        if ($session_says && $route == 'install') {
+            return Frontcontroller::redirect(BASE_URL.'/auth/logout');
+        }
+
         return $next($request);
     }
 
