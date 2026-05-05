@@ -2,7 +2,7 @@
 
 define('RESTRICTED', true);
 define('LEANTIME_START', microtime(true));
-header('X-App-Version: Leantime-Railway-Fixed-V3');
+header('X-App-Version: Leantime-Railway-Fixed-V4-Final');
 
 // Determine if the application is in maintenance mode...
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
