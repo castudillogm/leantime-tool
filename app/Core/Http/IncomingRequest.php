@@ -250,10 +250,14 @@ class IncomingRequest extends \Illuminate\Http\Request
     public function segments(): array
     {
         $segments = explode('/', $this->decodedPath());
+        $segments = array_values(array_filter($segments, fn ($v) => ! is_null($v) && $v !== '' && $v !== 'index.php'));
 
-        return array_values(array_filter($segments, static function ($value) {
-            return $value !== '';
-        }));
+        // If we're on the install route but segments didn't pick it up (can happen behind some proxies)
+        if (empty($segments) && str_contains($_SERVER['REQUEST_URI'] ?? '', 'install')) {
+            return ['install'];
+        }
+
+        return $segments;
     }
 
     public function decodedPath(): string
