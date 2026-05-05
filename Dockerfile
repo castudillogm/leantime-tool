@@ -68,4 +68,4 @@ RUN mkdir -p storage/framework/cache/data \
 EXPOSE 80
 
 # Command to replace ${PORT} in nginx config and start services
-CMD /bin/bash -c "envsubst '\${PORT}' < /etc/nginx/nginx.conf.template > /etc/nginx/sites-available/default && php-fpm -D && nginx -g 'daemon off;'"
+CMD /bin/bash -c "envsubst '\${PORT}' < /etc/nginx/nginx.conf.template > /etc/nginx/http.d/default.conf && php-fpm -D && nginx -g 'daemon off;'"
