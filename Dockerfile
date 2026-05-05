@@ -55,6 +55,11 @@ COPY --from=vendor /var/www/html/vendor ./vendor
 COPY . .
 
 # Set permissions for Leantime folders
+RUN sed -i 's/pm.max_children = 5/pm.max_children = 20/g' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/pm.start_servers = 2/pm.start_servers = 5/g' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/pm.min_spare_servers = 1/pm.min_spare_servers = 5/g' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/pm.max_spare_servers = 3/pm.max_spare_servers = 10/g' /usr/local/etc/php-fpm.d/www.conf
+
 RUN mkdir -p storage/framework/cache/data \
     && mkdir -p storage/framework/sessions \
     && mkdir -p storage/framework/views \
