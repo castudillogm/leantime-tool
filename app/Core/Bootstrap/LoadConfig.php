@@ -148,18 +148,29 @@ class LoadConfig extends LoadConfiguration
                     (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
 
         if (! defined('BASE_URL')) {
-            $scheme = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ||
-                      (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? 'https' : 'http';
+            $scheme = 'http';
+            if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ||
+                (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) {
+                $scheme = 'https';
+            }
+
             $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            
+            // Force HTTPS for Railway domains
+            if (strpos($host, '.railway.app') !== false) {
+                $scheme = 'https';
+            }
+            
             $appUrl = $scheme . '://' . $host;
             define('BASE_URL', $appUrl);
         }
 
-
-        putenv('APP_URL='.$appUrl);
+        putenv('APP_URL='.BASE_URL);
+        $config->set('appUrl', BASE_URL);
+        $config->set('app.url', BASE_URL);
 
         if (! defined('CURRENT_URL')) {
-            define('CURRENT_URL', ! empty($app['request']) ? BASE_URL.$app['request']->getRequestUri() : 'http://localhost');
+            define('CURRENT_URL', ! empty($app['request']) ? BASE_URL.$app['request']->getRequestUri() : BASE_URL);
         }
 
     }

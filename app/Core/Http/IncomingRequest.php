@@ -104,7 +104,14 @@ class IncomingRequest extends \Illuminate\Http\Request
     public function getPathInfo(): string
     {
         if (! $this->pathInfoCalculated) {
-            $pathInfo = str_replace('/index.php', '', $this->preparePathInfo());
+            $pathInfo = $this->preparePathInfo();
+            
+            // If Symfony thinks we are at index.php, but the URI says otherwise, trust the URI
+            if (($pathInfo === '/index.php' || $pathInfo === '/index.php/') && isset($_SERVER['REQUEST_URI'])) {
+                $pathInfo = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+            }
+            
+            $pathInfo = str_replace('/index.php', '', $pathInfo);
             $basePath = $this->getBasePath();
 
             // Only strip basePath if it exists at the start of pathInfo
