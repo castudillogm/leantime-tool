@@ -249,13 +249,13 @@ class IncomingRequest extends \Illuminate\Http\Request
 
     public function segments(): array
     {
-        // NUCLEAR FIX: If not installed, force the install route to prevent ANY redirect loops
-        if (config('is_installed') === false) {
-            return ['install'];
-        }
-
         $segments = explode('/', $this->decodedPath());
         $segments = array_values(array_filter($segments, fn ($v) => ! is_null($v) && $v !== '' && $v !== 'index.php'));
+
+        // Only force 'install' if segments are truly empty and we are not installed
+        if (empty($segments) && config('is_installed') === false) {
+            return ['install'];
+        }
 
         return $segments;
     }
