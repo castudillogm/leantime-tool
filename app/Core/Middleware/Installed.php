@@ -99,7 +99,9 @@ class Installed
         $allowedRoutes = ['install', 'install.update', 'api.i18n'];
         $allowedRoutes = self::dispatchFilter('allowedRoutes', $allowedRoutes);
         $route = $request->getCurrentRoute();
-        if (in_array($request->getCurrentRoute(), $allowedRoutes)) {
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+
+        if (in_array($request->getCurrentRoute(), $allowedRoutes) || str_contains($uri, 'install')) {
             return false;
         }
 
