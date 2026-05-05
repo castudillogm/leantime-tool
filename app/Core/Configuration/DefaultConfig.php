@@ -529,7 +529,7 @@ class DefaultConfig
     /**
      * @var string trusted Proxies
      */
-    public string $trustedProxies = '127.0.0.1,REMOTE_ADDR';
+    public string $trustedProxies = '*';
 
     /**
      * @var int rate limit on all requests
