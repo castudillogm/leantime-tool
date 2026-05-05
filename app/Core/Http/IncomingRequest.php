@@ -11,20 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class IncomingRequest extends \Illuminate\Http\Request
 {
+    protected static $isHtmx = null;
+
     /**
-     * Get the path info for the request.
-     * Overridden to strip /index.php from the path to prevent redirect loops.
-     *
-     * @return string
-     */
-    public function getPathInfo()
-    {
-        $pathInfo = parent::getPathInfo();
-
-        return str_replace('/index.php', '', $pathInfo) ?: '/';
-    }
-
-    protected static $isHtmx = null; /**
      * The decoded JSON content for the request.
      *
      * @var \Symfony\Component\HttpFoundation\InputBag|null
@@ -115,7 +104,7 @@ class IncomingRequest extends \Illuminate\Http\Request
     public function getPathInfo(): string
     {
         if (! $this->pathInfoCalculated) {
-            $pathInfo = $this->preparePathInfo();
+            $pathInfo = str_replace('/index.php', '', $this->preparePathInfo());
             $basePath = $this->getBasePath();
 
             // Only strip basePath if it exists at the start of pathInfo
