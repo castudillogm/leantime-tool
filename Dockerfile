@@ -1,30 +1,27 @@
-FROM php:8.2-fpm
+FROM php:8.2-fpm-alpine
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     nginx \
-    gettext-base \
-    libonig-dev \
-    libcurl4-openssl-dev \
-    libxml2-dev \
-    libxslt1-dev \
-    libzip-dev \
-    libldap-dev \
+    gettext \
     libpng-dev \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
     libzip-dev \
-    zip \
-    unzip \
+    openldap-dev \
+    icu-dev \
+    oniguruma-dev \
+    libxml2-dev \
+    bash \
     git \
-    && rm -rf /var/lib/apt/lists/*
+    zip \
+    unzip
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Install PHP extension installer
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
 # Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
-RUN docker-php-ext-install \
+RUN install-php-extensions \
     gd \
     mysqli \
     pdo_mysql \
@@ -34,19 +31,23 @@ RUN docker-php-ext-install \
     bcmath \
     opcache \
     ldap \
-    zip
+    zip \
+    intl
 
 # Configure PHP for production
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # Add OPcache configuration
-RUN echo "opcache.memory_consumption=256\nopcache.interned_strings_buffer=16\nopcache.max_accelerated_files=20000\nopcache.revalidate_freq=0\nopcache.validate_timestamps=0\nopcache.fast_shutdown=1" > /usr/local/etc/php/conf.d/opcache-optimized.ini
+RUN echo -e "opcache.memory_consumption=256\nopcache.interned_strings_buffer=16\nopcache.max_accelerated_files=20000\nopcache.revalidate_freq=0\nopcache.validate_timestamps=0\nopcache.fast_shutdown=1" > /usr/local/etc/php/conf.d/opcache-optimized.ini
 
 # Copy Nginx config template
 COPY nginx.conf /etc/nginx/nginx.conf.template
 
 # Set working directory
 WORKDIR /var/www/html
+
+# Copy Composer from latest image
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copy project files
 COPY . .
