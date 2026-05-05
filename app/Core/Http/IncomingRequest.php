@@ -12,6 +12,19 @@ use Symfony\Component\HttpFoundation\Request;
 class IncomingRequest extends \Illuminate\Http\Request
 {
     /**
+     * Get the path info for the request.
+     * Overridden to strip /index.php from the path to prevent redirect loops.
+     *
+     * @return string
+     */
+    public function getPathInfo()
+    {
+        $pathInfo = parent::getPathInfo();
+
+        return str_replace('/index.php', '', $pathInfo) ?: '/';
+    }
+
+    protected static $isHtmx = null; /**
      * The decoded JSON content for the request.
      *
      * @var \Symfony\Component\HttpFoundation\InputBag|null
