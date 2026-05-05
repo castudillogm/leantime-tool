@@ -129,6 +129,19 @@ class LoadConfig extends LoadConfiguration
 
         // Set trusted prozies as early as possible to ensure schema is identified correctly
         $proxies = explode(',', ($config->trustedProxies ?? '127.0.0.1,REMOTE_ADDR'));
+        $proxies = array_map(function ($proxy) {
+            $proxy = trim($proxy);
+            if ($proxy === 'REMOTE_ADDR') {
+                return $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+            }
+
+            return $proxy;
+        }, $proxies);
+
+        if (in_array('*', $proxies)) {
+            $proxies = [$_SERVER['REMOTE_ADDR'] ?? '127.0.0.1'];
+        }
+
         Request::setTrustedProxies($proxies, $this->headers);
 
         if (! defined('BASE_URL')) {
