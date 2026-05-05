@@ -144,11 +144,19 @@ class LoadConfig extends LoadConfiguration
 
         Request::setTrustedProxies($proxies, $this->headers);
 
+        $isSecure = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ||
+                    (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+
         if (! defined('BASE_URL')) {
             if (isset($appUrl) && ! empty($appUrl)) {
+                if ($isSecure && str_starts_with($appUrl, 'http://')) {
+                    $appUrl = str_replace('http://', 'https://', $appUrl);
+                }
                 define('BASE_URL', $appUrl);
             } else {
-                $appUrl = ! empty($app['request']) ? $app['request']->getSchemeAndHttpHost() : 'http://localhost';
+                $scheme = $isSecure ? 'https' : 'http';
+                $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+                $appUrl = $scheme . '://' . $host;
                 define('BASE_URL', $appUrl);
             }
         }
