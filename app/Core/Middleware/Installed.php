@@ -101,7 +101,9 @@ class Installed
         $route = $request->getCurrentRoute();
         $uri = $_SERVER['REQUEST_URI'] ?? '';
 
-        if (in_array($request->getCurrentRoute(), $allowedRoutes) || str_contains($uri, 'install')) {
+        $isAsset = str_contains($uri, '/dist/') || str_contains($uri, '/assets/') || str_contains($uri, '/images/') || str_contains($uri, '/theme/');
+
+        if (in_array($request->getCurrentRoute(), $allowedRoutes) || str_contains($uri, 'install') || $isAsset) {
             return false;
         }
 
