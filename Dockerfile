@@ -1,21 +1,25 @@
+# Stage 1: Build dependencies
+FROM composer:latest AS vendor
+WORKDIR /var/www/html
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
+
+# Stage 2: Final production image
 FROM php:8.2-fpm-alpine
 
-# Install system dependencies
+# Install ONLY necessary runtime dependencies
 RUN apk add --no-cache \
     nginx \
     gettext \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    libzip-dev \
-    openldap-dev \
-    icu-dev \
-    oniguruma-dev \
-    libxml2-dev \
-    bash \
-    git \
-    zip \
-    unzip
+    libpng \
+    libjpeg-turbo \
+    freetype \
+    libzip \
+    libldap \
+    icu-libs \
+    oniguruma \
+    libxml2 \
+    bash
 
 # Install PHP extension installer
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
@@ -36,8 +40,6 @@ RUN install-php-extensions \
 
 # Configure PHP for production
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-
-# Add OPcache configuration
 RUN echo -e "opcache.memory_consumption=256\nopcache.interned_strings_buffer=16\nopcache.max_accelerated_files=20000\nopcache.revalidate_freq=0\nopcache.validate_timestamps=0\nopcache.fast_shutdown=1" > /usr/local/etc/php/conf.d/opcache-optimized.ini
 
 # Copy Nginx config template
@@ -46,14 +48,11 @@ COPY nginx.conf /etc/nginx/nginx.conf.template
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy Composer from latest image
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Copy vendor from the builder stage
+COPY --from=vendor /var/www/html/vendor ./vendor
 
-# Copy project files
+# Copy project files (respecting .dockerignore)
 COPY . .
-
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Set permissions for Leantime folders
 RUN mkdir -p storage/framework/cache/data \
