@@ -94,7 +94,14 @@
     "webpack": "^5.105.2",
     "webpack-cli": "^5.1.4"
   },
-  "scripts": {},
+  "scripts": {
+    "development": "mix",
+    "watch": "mix watch",
+    "watch-poll": "mix watch -- --watch-options-stdin --poll",
+    "hot": "mix watch --hot",
+    "production": "mix --production",
+    "prod": "npm run production"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Leantime/leantime"

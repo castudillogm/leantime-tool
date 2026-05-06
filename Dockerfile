@@ -7,14 +7,10 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-pl
 # Stage 2: Build JS/CSS assets
 FROM node:18-alpine AS node
 WORKDIR /var/www/html
-COPY package.json webpack.mix.js tailwind.config.js ./
-# Copy resources needed for the build
-COPY public/assets ./public/assets
-COPY app/Domain ./app/Domain
-# If package-lock exists, use it
-COPY package-lock.json* ./
+# Copy all files first to ensure Mix has everything it needs (configs, assets, domain logic)
+COPY . .
 RUN npm install
-RUN npx mix --production
+RUN npm run prod
 
 # Stage 3: Final production image
 FROM php:8.2-fpm-alpine
