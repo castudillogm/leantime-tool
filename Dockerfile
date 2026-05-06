@@ -77,6 +77,7 @@ RUN mkdir -p storage/framework/cache/data \
     && mkdir -p storage/logs \
     && mkdir -p public/userfiles \
     && chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 public \
     && chmod -R 775 storage public/userfiles
 
 # Expose port

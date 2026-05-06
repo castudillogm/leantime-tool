@@ -14,7 +14,7 @@
 </head>
 
 <body class="loginpage" style="height:100%; ">
-<div class="" style="background:url({{BASE_URL}}/assets/images/spotlightBg.png); background-size: cover; height:100%; background-attachment: fixed;">
+<div class="" style="background:url({!! BASE_URL !!}/assets/images/spotlightBg.png); background-size: cover; height:100%; background-attachment: fixed;">
     <div style="    width: 100%;
     height: 100%;
     background: rgba(0,0,0,0.2);
@@ -32,7 +32,7 @@
                 <div class="col-md-7">
                     <div class="regpanelinner" style="padding:30px;">
 
-                        <a href=""><img src="{{ BASE_URL }}/dist/images/logo_blue.svg" style="width:50%;"/></a><br /><br />
+                        <a href=""><img src="{!! BASE_URL !!}/dist/images/logo_blue.svg" style="width:50%;"/></a><br /><br />
 
                         @isset($action, $module)
                             @include("$module::$action")

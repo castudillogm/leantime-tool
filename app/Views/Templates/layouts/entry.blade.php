@@ -12,7 +12,7 @@
 
 <div class="header hidden-gt-sm tw-p-[10px]" style="background:var(--header-gradient)">
     <a href="{!! BASE_URL !!}" target="_blank">
-        <img src="{{ BASE_URL }}/dist/images/logo.svg" class="tw-h-full "/>
+        <img src="{!! BASE_URL !!}/dist/images/logo.svg" class="tw-h-full "/>
     </a>
 </div>
 
@@ -21,7 +21,7 @@
 
         <div class="logo">
             <a href="{!! BASE_URL !!}" target="_blank">
-                <img src="{{ BASE_URL }}/dist/images/logo.svg" />
+                <img src="{!! BASE_URL !!}/dist/images/logo.svg" />
             </a>
         </div>
 
@@ -41,7 +41,7 @@
                     <a href="{!! BASE_URL !!}" target="_blank">
 
                         @if(!str_ends_with($logoPath, "dist/images/logo.svg" ))
-                            <img src="{{ $logoPath }}" class="tw-h-full "/>
+                            <img src="{!! $logoPath !!}" class="tw-h-full "/>
                         @endif
                     </a>
                 @endif
