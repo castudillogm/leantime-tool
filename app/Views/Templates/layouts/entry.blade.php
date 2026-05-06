@@ -12,7 +12,7 @@
 
 <div class="header hidden-gt-sm tw-p-[10px]" style="background:var(--header-gradient)">
     <a href="{!! BASE_URL !!}" target="_blank">
-        <img src="{!! BASE_URL !!}/dist/images/logo.svg" class="tw-h-full "/>
+        <img src="/dist/images/logo.svg" class="tw-h-full "/>
     </a>
 </div>
 
@@ -21,7 +21,7 @@
 
         <div class="logo">
             <a href="{!! BASE_URL !!}" target="_blank">
-                <img src="{!! BASE_URL !!}/dist/images/logo.svg" />
+                <img src="/dist/images/logo.svg" />
             </a>
         </div>
 
@@ -56,7 +56,7 @@
 
     </div>
     <div class="leantimeLogo">
-        <img style="height: 25px;" src="{!! BASE_URL !!}/dist/images/logo-powered-by-leantime.png">
+        <img style="height: 25px;" src="/dist/images/logo-powered-by-leantime.png">
     </div>
 </div>
 
