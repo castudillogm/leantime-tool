@@ -23,14 +23,14 @@ class DelTicket extends Controller
     /**
      * @throws \Exception
      */
-    public function get(): Response
+    public function get($params): Response
     {
 
         // Only admins
         if (Auth::userIsAtLeast(Roles::$editor)) {
 
-            if (isset($_GET['id'])) {
-                $id = (int) ($_GET['id']);
+            if (isset($params['id'])) {
+                $id = (int) ($params['id']);
 
                 try {
 
@@ -61,8 +61,8 @@ class DelTicket extends Controller
      */
     public function post($params): Response
     {
-        if (isset($_GET['id'])) {
-            $id = (int) ($_GET['id']);
+        if (isset($params['id'])) {
+            $id = (int) ($params['id']);
         }
 
         // Only admins

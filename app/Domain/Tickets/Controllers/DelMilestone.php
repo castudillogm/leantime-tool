@@ -24,13 +24,13 @@ class DelMilestone extends Controller
     /**
      * @throws BindingResolutionException
      */
-    public function get(): Response
+    public function get($params): Response
     {
 
         // Only admins
         if (Auth::userIsAtLeast(Roles::$editor)) {
-            if (isset($_GET['id'])) {
-                $id = (int) ($_GET['id']);
+            if (isset($params['id'])) {
+                $id = (int) ($params['id']);
             }
 
             $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
@@ -46,7 +46,7 @@ class DelMilestone extends Controller
      */
     public function post($params): Response
     {
-        if (! isset($_GET['id'], $params['del'])) {
+        if (! isset($params['id'], $params['del'])) {
             return $this->tpl->displayPartial('errors.error400', responseCode: 400);
         }
 
@@ -54,7 +54,7 @@ class DelMilestone extends Controller
             return $this->tpl->displayPartial('errors.error403', responseCode: 403);
         }
 
-        if ($result = $this->ticketService->deleteMilestone($id = (int) ($_GET['id']))) {
+        if ($result = $this->ticketService->deleteMilestone($id = (int) ($params['id']))) {
             $this->tpl->setNotification($this->language->__('notification.milestone_deleted'), 'success');
 
             return Frontcontroller::redirect(BASE_URL.'/tickets/roadmap');

@@ -14,6 +14,12 @@ if (preg_match('/^\/(?:[^\/]+\/)*(dist|assets|images|theme|userfiles|favicon\.ic
 $publicFile = PUBLIC_PATH . '/' . ltrim($requestUri, '/');
 $publicFile = str_replace(['//', '\\\\'], ['/', '\\'], $publicFile);
 
+// Re-parse query string if necessary
+if (isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING'])) {
+    parse_str($_SERVER['QUERY_STRING'], $queryStringArray);
+    $_GET = array_merge($_GET, $queryStringArray);
+}
+
 if (file_exists($publicFile) && is_file($publicFile)) {
     // If it's a static file in public, serve it directly
     $extension = strtolower(pathinfo($publicFile, PATHINFO_EXTENSION));

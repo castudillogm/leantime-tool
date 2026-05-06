@@ -28,15 +28,15 @@ class DelProject extends Controller
     /**
      * run - display template and edit data
      */
-    public function run()
+    public function run($params)
     {
 
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
         // Only admins
         if (Auth::userIsAtLeast(Roles::$manager)) {
-            if (isset($_GET['id']) === true) {
-                $id = (int) ($_GET['id']);
+            if (isset($params['id']) === true) {
+                $id = (int) ($params['id']);
 
                 if ($this->projectRepo->hasTickets($id)) {
                     $this->tpl->setNotification($this->language->__('notification.project_has_tasks'), 'info');
