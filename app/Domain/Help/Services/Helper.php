@@ -192,9 +192,13 @@ class Helper
      */
     public function ensureDefaultProject(int $userId, string $role = 'editor'): void
     {
-        $currentProject = session('currentProject');
-        if ($currentProject === null || $currentProject === 0 || $currentProject === '' || $currentProject === false) {
-            $this->createDefaultProject($userId, $role);
+        // Only create a default project if the user hasn't completed onboarding yet
+        if ($this->isFirstLogin($userId)) {
+            $currentProject = session('currentProject');
+            if ($currentProject === null || $currentProject === 0 || $currentProject === '' || $currentProject === false) {
+                $this->createDefaultProject($userId, $role);
+                $this->markFirstLoginComplete($userId);
+            }
         }
     }
 
