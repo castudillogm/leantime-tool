@@ -99,7 +99,7 @@
     "watch": "mix watch",
     "watch-poll": "mix watch -- --watch-options-stdin --poll",
     "hot": "mix watch --hot",
-    "production": "mix --production",
+    "production": "mix --production --no-progress",
     "prod": "npm run production"
   },
   "repository": {

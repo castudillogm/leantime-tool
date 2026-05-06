@@ -151,6 +151,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
     .copy('./node_modules/katex/dist/fonts', 'public/dist/fonts/katex')
     .copy('./node_modules/katex/dist/katex.min.css', 'public/dist/css/katex.min.css')
     .copy('./node_modules/katex/dist/fonts', 'public/dist/css/fonts')
+    /*
     .eslint({
         fix: true,
         extensions: ['js'],
@@ -162,6 +163,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
             parser: '@babel/eslint-parser',
         }
     })
+    */
     .webpackConfig({
         devtool: 'inline-source-map',
         resolve: {

@@ -4,10 +4,10 @@
 node_modules
 vendor
 reset_pass.php
+# Build scripts
 Launch Leantime.ps1
 Launch Leantime.bat
 Build Leantime.bat
-package-lock.json
 storage/logs/*
 storage/framework/cache/*
 storage/framework/sessions/*
