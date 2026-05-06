@@ -11,9 +11,10 @@ WORKDIR /var/www/html
 COPY . .
 RUN npm install
 RUN npm run prod
-# Manually ensure images are copied, as Mix copyDirectory can be flaky in Docker
-RUN mkdir -p public/dist/images && cp -rf public/assets/images/* public/dist/images/
-RUN ls -R public/dist/images
+# Ensure all dist folders exist and are populated
+RUN mkdir -p public/dist/images public/dist/css public/dist/js public/dist/fonts
+RUN cp -rf public/assets/images/* public/dist/images/ || true
+RUN ls -R public/dist
 
 # Stage 3: Final production image
 FROM php:8.2-fpm-alpine
