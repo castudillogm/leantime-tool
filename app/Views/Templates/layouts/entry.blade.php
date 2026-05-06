@@ -56,7 +56,7 @@
 
     </div>
     <div class="leantimeLogo">
-        <img style="height: 25px;" src="/dist/images/logo-powered-by-leantime.png">
+        <span style="font-size: 12px; color: var(--text-muted);">Powered by Lean Tools</span>
     </div>
 </div>
 
