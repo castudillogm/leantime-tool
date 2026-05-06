@@ -35,8 +35,11 @@ class AuthCheck
         'oidc.login',
         'oidc.callback',
         'cron.run',
-        'auth.callback',
         'auth.redirect',
+        'dist',
+        'assets',
+        'images',
+        'theme',
     ];
 
     public function __construct(

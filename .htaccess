@@ -1,2 +1,7 @@
 RewriteEngine On
+
+# Fix for assets requested from sub-routes (like /install/dist/...)
+RewriteRule ^.*/(dist|assets|images|theme|userfiles|favicon\.ico|robots\.txt)(.*)$ public/$1$2 [L]
+
+# Default rewrite to public
 RewriteRule ^(.*)$ public/$1 [L]

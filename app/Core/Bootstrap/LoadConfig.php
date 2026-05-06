@@ -68,6 +68,9 @@ class LoadConfig extends LoadConfiguration
                 // At this point we have the leantime config and loaded laravel configs
                 // Re-aranging and setting some of the laravel defaults that were not set
                 // as part of the file loader. Laravel config vars were already added.
+                // At this point we have the leantime config and loaded laravel configs
+                // Re-aranging and setting some of the laravel defaults that were not set
+                // as part of the file loader. Laravel config vars were already added.
                 $finalConfig = $this->mapLeantime2LaravelConfig($config);
 
                 // Additional adjustments
@@ -81,9 +84,10 @@ class LoadConfig extends LoadConfiguration
 
                 $this->setBaseConstants($finalConfig, $app);
 
-                if ($finalConfig->get('app.url') == '') {
-                    $url = defined('BASE_URL') ? BASE_URL : 'http://localhost';
-                    $finalConfig->set('app.url', $url);
+                // Force app.url to match detected BASE_URL to prevent mixed content
+                if (defined('BASE_URL')) {
+                    $finalConfig->set('app.url', BASE_URL);
+                    $finalConfig->set('appUrl', BASE_URL);
                 }
 
                 // Handle trailing slashes
@@ -127,25 +131,28 @@ class LoadConfig extends LoadConfiguration
 
         $appUrl = $config->get('appUrl');
 
-        // Set trusted prozies as early as possible to ensure schema is identified correctly
+        // Set trusted proxies as early as possible to ensure schema is identified correctly
         $proxies = explode(',', ($config->trustedProxies ?? '127.0.0.1,REMOTE_ADDR'));
-        $proxies = array_map(function ($proxy) {
-            $proxy = trim($proxy);
-            if ($proxy === 'REMOTE_ADDR') {
-                return $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        
+        // On Railway and other cloud platforms, we should trust the proxy headers more aggressively
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        if (strpos($host, '.railway.app') !== false || isset($_SERVER['RAILWAY_STATIC_URL'])) {
+            $proxies = ['0.0.0.0/0', '::/0']; // Trust all proxies on Railway
+        } else {
+            $proxies = array_map(function ($proxy) {
+                $proxy = trim($proxy);
+                if ($proxy === 'REMOTE_ADDR') {
+                    return $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+                }
+                return $proxy;
+            }, $proxies);
+
+            if (in_array('*', $proxies)) {
+                $proxies = ['0.0.0.0/0', '::/0'];
             }
-
-            return $proxy;
-        }, $proxies);
-
-        if (in_array('*', $proxies)) {
-            $proxies = [$_SERVER['REMOTE_ADDR'] ?? '127.0.0.1'];
         }
 
         Request::setTrustedProxies($proxies, $this->headers);
-
-        $isSecure = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ||
-                    (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
 
         if (! defined('BASE_URL')) {
             $scheme = 'http';
@@ -154,15 +161,17 @@ class LoadConfig extends LoadConfiguration
                 $scheme = 'https';
             }
 
-            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-            
-            // Force HTTPS for Railway domains
-            if (strpos($host, '.railway.app') !== false) {
+            // Force HTTPS for Railway domains and when X-Forwarded-Proto is set
+            if (strpos($host, '.railway.app') !== false || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) {
                 $scheme = 'https';
             }
             
-            $appUrl = $scheme . '://' . $host;
-            define('BASE_URL', $appUrl);
+            // Check if host already contains scheme
+            if (strpos($host, '://') !== false) {
+                define('BASE_URL', rtrim($host, '/'));
+            } else {
+                define('BASE_URL', $scheme . '://' . $host);
+            }
         }
 
         putenv('APP_URL='.BASE_URL);

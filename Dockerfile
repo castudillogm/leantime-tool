@@ -1,10 +1,22 @@
-# Stage 1: Build dependencies
+# Stage 1: Build PHP dependencies
 FROM composer:latest AS vendor
 WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 
-# Stage 2: Final production image
+# Stage 2: Build JS/CSS assets
+FROM node:18-alpine AS node
+WORKDIR /var/www/html
+COPY package.json webpack.mix.js tailwind.config.js ./
+# Copy resources needed for the build
+COPY public/assets ./public/assets
+COPY app/Domain ./app/Domain
+# If package-lock exists, use it
+COPY package-lock.json* ./
+RUN npm install
+RUN npx mix --production
+
+# Stage 3: Final production image
 FROM php:8.2-fpm-alpine
 
 # Install ONLY necessary runtime dependencies
@@ -48,11 +60,14 @@ COPY nginx.conf /etc/nginx/nginx.conf.template
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy vendor from the builder stage
-COPY --from=vendor /var/www/html/vendor ./vendor
-
 # Copy project files (respecting .dockerignore)
 COPY . .
+
+# Copy compiled assets from the node builder stage
+COPY --from=node /var/www/html/public/dist ./public/dist
+
+# Copy vendor from the vendor builder stage
+COPY --from=vendor /var/www/html/vendor ./vendor
 
 # Set permissions for Leantime folders
 RUN sed -i 's/pm.max_children = 5/pm.max_children = 20/g' /usr/local/etc/php-fpm.d/www.conf \
