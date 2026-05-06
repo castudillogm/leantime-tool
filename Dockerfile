@@ -11,6 +11,7 @@ WORKDIR /var/www/html
 COPY . .
 RUN npm install
 RUN npm run prod
+RUN ls -R public/dist/images
 
 # Stage 3: Final production image
 FROM php:8.2-fpm-alpine
