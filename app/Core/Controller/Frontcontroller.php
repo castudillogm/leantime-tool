@@ -400,7 +400,7 @@ class Frontcontroller
     {
 
         if (app('request')->headers->get('is-modal')) {
-            Frontcontroller::redirectHtmx($url, $headers);
+            return Frontcontroller::redirectHtmx($url, $headers);
         }
 
         return new RedirectResponse(

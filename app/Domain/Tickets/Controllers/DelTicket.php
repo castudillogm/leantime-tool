@@ -43,8 +43,14 @@ class DelTicket extends Controller
                     return $this->tpl->displayPartial('tickets.delTicket');
                 }
 
+                $ticket = $this->ticketService->getTicket($id);
+
+                if ($ticket === false) {
+                    return Frontcontroller::redirect(session('lastPage') ?? BASE_URL.'/');
+                }
+
                 $this->tpl->assign('error', '');
-                $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+                $this->tpl->assign('ticket', $ticket);
 
                 return $this->tpl->displayPartial('tickets.delTicket');
 
