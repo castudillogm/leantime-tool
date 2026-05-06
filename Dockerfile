@@ -11,6 +11,8 @@ WORKDIR /var/www/html
 COPY . .
 RUN npm install
 RUN npm run prod
+# Manually ensure images are copied, as Mix copyDirectory can be flaky in Docker
+RUN mkdir -p public/dist/images && cp -rf public/assets/images/* public/dist/images/
 RUN ls -R public/dist/images
 
 # Stage 3: Final production image
