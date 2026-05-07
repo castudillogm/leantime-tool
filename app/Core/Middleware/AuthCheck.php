@@ -36,6 +36,8 @@ class AuthCheck
         'oidc.callback',
         'cron.run',
         'auth.redirect',
+        'auth.googleLogin',
+        'auth.googleCallback',
         'dist',
         'assets',
         'images',
