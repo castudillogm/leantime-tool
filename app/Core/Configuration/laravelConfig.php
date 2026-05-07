@@ -984,5 +984,11 @@ return [
     'hashing' => [
         'rehash_on_login' => false,
     ],
-
+    'services' => [
+        'google' => [
+            'client_id' => env('LEAN_GOOGLE_CLIENT_ID'),
+            'client_secret' => env('LEAN_GOOGLE_CLIENT_SECRET'),
+            'redirect' => env('LEAN_GOOGLE_REDIRECT_URI'),
+        ],
+    ],
 ];

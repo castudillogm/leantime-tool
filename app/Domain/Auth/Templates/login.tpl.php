@@ -50,11 +50,8 @@ $redirectUrl = $tpl->get('redirectUrl');
     <?php }// if disableLoginForm?>
 
     <?php if ($tpl->get('oidcEnabled')) { ?>
-
-        <?php $tpl->dispatchTplEvent('beforeOidcButton'); ?>
-
         <div class="">
-            <div style="margin-top:20px; border-bottom:1px solid #ccc; with:100%; height:10px; overflow:show; text-align:center; margin-bottom:40px;">
+            <div style="margin-top:20px; border-bottom:1px solid #ccc; width:100%; height:10px; overflow:show; text-align:center; margin-bottom:40px;">
                 <p style="text-align:center; display:inline-block; background:var(--secondary-background); padding:0px 5px;"><?php echo $tpl->language->__('label.or_login_with'); ?></p>
             </div>
             <a href="<?= BASE_URL ?>/oidc/login" style="width:100%;" class="btn btn-primary">
@@ -62,6 +59,15 @@ $redirectUrl = $tpl->get('redirectUrl');
             </a>
         </div>
     <?php } ?>
+
+    <div class="">
+        <div style="margin-top:20px; border-bottom:1px solid #ccc; width:100%; height:10px; overflow:show; text-align:center; margin-bottom:40px;">
+            <p style="text-align:center; display:inline-block; background:var(--secondary-background); padding:0px 5px;"><?php echo $tpl->language->__('label.or_login_with'); ?></p>
+        </div>
+        <a href="<?= BASE_URL ?>/auth/googleLogin" style="width:100%; background-color: #4285F4; color: white;" class="btn">
+            <i class="fa-brands fa-google"></i> <?php echo $tpl->language->__('buttons.google_login'); ?>
+        </a>
+    </div>
 
     <?php $tpl->dispatchTplEvent('beforeRegcontentClose'); ?>
 </div>

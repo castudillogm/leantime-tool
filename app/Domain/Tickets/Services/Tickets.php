@@ -1984,7 +1984,7 @@ class Tickets
             // Update Ticket
             $addTicketResponse = $this->ticketRepository->addTicket($values);
 
-            self::dispatchEvent('ticket_created');
+            self::dispatchEvent('ticket_created', ['entity' => $values]);
 
             if ($addTicketResponse !== false) {
                 $values['id'] = $addTicketResponse;
@@ -2117,7 +2117,7 @@ class Tickets
 
             $this->projectService->notifyProjectUsers($notification);
 
-            self::dispatchEvent('ticket_updated');
+            self::dispatchEvent('ticket_updated', ['entity' => $values]);
 
             return true;
         }

@@ -6,7 +6,7 @@
 </span>
 {{--    <div class="row">--}}
 {{--        <div class="col-md-6">--}}
-            © {{ date("Y") }} by Lean Tools
+            © {{ date("Y") }} by Lean Tool
 {{--        </div>--}}
 {{--        <div class="col-md-6 align-right">--}}
 {{--            <a href="">--}}

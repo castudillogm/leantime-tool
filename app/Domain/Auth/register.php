@@ -47,3 +47,19 @@ EventDispatcher::add_filter_listener('leantime.domain.auth.*.belowWelcomeText', 
             </div>
     ';
 });
+
+EventDispatcher::add_event_listener('leantime.domain.tickets.services.tickets.*.ticket_created', function ($payload) {
+    $ticket = $payload['entity'] ?? null;
+    if ($ticket) {
+        $syncService = app()->make(\Leantime\Domain\Auth\Services\GoogleSync::class);
+        $syncService->syncTicketToGoogle(session('userdata.id'), $ticket);
+    }
+});
+
+EventDispatcher::add_event_listener('leantime.domain.tickets.services.tickets.*.ticket_updated', function ($payload) {
+    $ticket = $payload['entity'] ?? null;
+    if ($ticket) {
+        $syncService = app()->make(\Leantime\Domain\Auth\Services\GoogleSync::class);
+        $syncService->syncTicketToGoogle(session('userdata.id'), $ticket);
+    }
+});

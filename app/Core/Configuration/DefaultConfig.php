@@ -14,7 +14,7 @@ class DefaultConfig
      * @var string Name of your site, can be changed later
      */
     #[LaravelConfig('app.name')]
-    public string $sitename = 'Lean Tools';
+    public string $sitename = 'Lean Tool';
 
     /**
      * @var string Default language
@@ -25,12 +25,12 @@ class DefaultConfig
     /**
      * @var string Default logo path, can be changed later
      */
-    public string $logoPath = '/dist/images/logo.svg';
+    public string $logoPath = '/dist/images/logo-lean-tool.png';
 
     /**
      * @var string Default logo URL use for printing (must be jpg or png format)
      */
-    public string $printLogoURL = '/dist/images/logo.jpg';
+    public string $printLogoUrl = '/dist/images/logo-lean-tool.png';
 
     /**
      * @var string Base URL, trailing slash not needed
