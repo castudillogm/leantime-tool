@@ -107,6 +107,22 @@ class DefaultConfig
      */
     public bool $disableLoginForm = false;
 
+    // Google OAuth ================================================================================
+    /**
+     * @var string Google Client ID
+     */
+    public string $googleClientId = '';
+
+    /**
+     * @var string Google Client Secret
+     */
+    public string $googleClientSecret = '';
+
+    /**
+     * @var string Google Redirect URI
+     */
+    public string $googleRedirectUri = '';
+
     // Database ====================================================================================
     /**
      * @var string Database host

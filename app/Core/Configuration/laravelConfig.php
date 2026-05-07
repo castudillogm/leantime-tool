@@ -986,9 +986,9 @@ return [
     ],
     'services' => [
         'google' => [
-            'client_id' => env('LEAN_GOOGLE_CLIENT_ID'),
-            'client_secret' => env('LEAN_GOOGLE_CLIENT_SECRET'),
-            'redirect' => env('LEAN_GOOGLE_REDIRECT_URI', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]/auth/googleCallback"),
+            'client_id' => $_ENV['LEAN_GOOGLE_CLIENT_ID'] ?? $_SERVER['LEAN_GOOGLE_CLIENT_ID'] ?? env('LEAN_GOOGLE_CLIENT_ID'),
+            'client_secret' => $_ENV['LEAN_GOOGLE_CLIENT_SECRET'] ?? $_SERVER['LEAN_GOOGLE_CLIENT_SECRET'] ?? env('LEAN_GOOGLE_CLIENT_SECRET'),
+            'redirect' => $_ENV['LEAN_GOOGLE_REDIRECT_URI'] ?? $_SERVER['LEAN_GOOGLE_REDIRECT_URI'] ?? env('LEAN_GOOGLE_REDIRECT_URI', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]/auth/googleCallback"),
         ],
     ],
 ];
