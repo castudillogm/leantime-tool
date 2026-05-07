@@ -14,6 +14,7 @@ class GoogleLogin extends Controller
     public function run(array $params): Response
     {
         return Socialite::driver('google')
+            ->redirectUrl(env('LEAN_GOOGLE_REDIRECT_URI', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]/auth/googleCallback"))
             ->setScopes(['openid', 'profile', 'email', 'https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/tasks'])
             ->with(['access_type' => 'offline', 'prompt' => 'consent'])
             ->redirect();
