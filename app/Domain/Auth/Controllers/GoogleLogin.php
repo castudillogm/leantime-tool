@@ -18,7 +18,7 @@ class GoogleLogin extends Controller
 
         return Socialite::driver('google')
             ->redirectUrl($redirectUri)
-            ->setScopes(['openid', 'profile', 'email', 'https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/tasks'])
+            ->setScopes(['openid', 'profile', 'email'])
             ->with(['access_type' => 'offline', 'prompt' => 'consent'])
             ->redirect();
     }
