@@ -23,7 +23,7 @@
                 <div class="logo">
                     <a
                         href="{{ BASE_URL }}"
-                        style="background-image: url('{{ BASE_URL }}/dist/images/logo.svg')"
+                        style="background-image: url('{{ BASE_URL }}/dist/images/logo-lean-tool.png'); background-size: contain; background-repeat: no-repeat; background-position: left center;"
                     >&nbsp;</a>
                 </div>
 

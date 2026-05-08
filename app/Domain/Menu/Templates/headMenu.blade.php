@@ -182,7 +182,7 @@
                     {!! __("menu.submit_bug") !!}
                 </a>
             </li>
-            <li class="nav-header border">{!! __("menu.leantime_community") !!}</li>
+            <li class="nav-header border">{!! __("menu.lean_tool_community") !!}</li>
             <li>
                 <a href='https://discord.gg/4zMzJtAq9z' target="_blank">
                     {!! __("menu.community") !!}
@@ -194,7 +194,7 @@
                 </a>
             </li>
             <li class="nav-header border">System</li>
-            <li><a href="https://github.com/Leantime/leantime/releases" target="_blank">Leantime V{{ app(\Leantime\Core\Configuration\AppSettings::class)->appVersion }}</a></li>
+            <li><a href="https://github.com/Leantime/leantime/releases" target="_blank">Lean Tool V{{ app(\Leantime\Core\Configuration\AppSettings::class)->appVersion }}</a></li>
         </ul>
     </li>
 
