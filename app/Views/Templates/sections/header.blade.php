@@ -10,7 +10,7 @@
 <meta name="color-scheme" content="{{ $themeColorMode }}">
 <meta name="theme" content="{{ $theme }}">
 <meta name="identifier-URL" content="{!! BASE_URL !!}">
-<meta name="lean-tools-version" content="{{ $version }}">
+<meta name="lean-tool-version" content="{{ $version }}">
 
 @dispatchEvent('afterMetaTags')
 
