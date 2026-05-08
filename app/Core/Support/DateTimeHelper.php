@@ -168,7 +168,8 @@ class DateTimeHelper extends CarbonImmutable
         }
 
         try {
-            $this->datetime = CarbonImmutable::createFromFormat($this->dbFormat, $dbDate, $this->dbTimezone)->locale(
+            // Force the system to treat the DB date as local to prevent any shifts on read
+            $this->datetime = CarbonImmutable::createFromFormat($this->dbFormat, $dbDate, $this->userTimezone)->locale(
                 $this->userLanguage
             );
 
@@ -176,8 +177,8 @@ class DateTimeHelper extends CarbonImmutable
 
         } catch (\Exception $e) {
 
-            // Try standard formats first (non timezone formats are assumed user timezone)
-            $standardFormat = $this->tryParseStandardFormats($dbDate, $this->dbTimezone);
+            // Try standard formats first
+            $standardFormat = $this->tryParseStandardFormats($dbDate, $this->userTimezone);
             if ($standardFormat !== false) {
                 $this->datetime = $standardFormat;
 
