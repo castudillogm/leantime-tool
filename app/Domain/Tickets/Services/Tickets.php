@@ -3492,21 +3492,15 @@ class Tickets
                 if ($values['dateToFinish'] instanceof CarbonImmutable) {
                     $values['dateToFinish'] = $values['dateToFinish']->formatDateTimeForDb();
                 } else {
-                    if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
-                        $values['dateToFinish'] = dtHelper()->parseUserDateTime(
-                            $values['dateToFinish'],
-                            $values['timeToFinish']
-                        )->formatDateTimeForDb();
+                    $time = $values['timeToFinish'] ?? 'end';
+                    $parsed = dtHelper()->parseUserDateTime($values['dateToFinish'], $time);
+                    if ($parsed) {
+                        $values['dateToFinish'] = $parsed->formatDateTimeForDb();
                         unset($values['timeToFinish']);
-                    } else {
-                        $values['dateToFinish'] = dtHelper()->parseUserDateTime(
-                            $values['dateToFinish'],
-                            'end'
-                        )->formatDateTimeForDb();
                     }
                 }
             } catch (\Exception $e) {
-                // Keep original value if parsing fails
+                error_log("DateToFinish Parsing Error: " . $e->getMessage() . " for value: " . $values['dateToFinish']);
             }
         }
 
@@ -3516,22 +3510,15 @@ class Tickets
                 if ($values['editFrom'] instanceof CarbonImmutable) {
                     $values['editFrom'] = $values['editFrom']->formatDateTimeForDb();
                 } else {
-                    if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
-                        $values['editFrom'] = dtHelper()->parseUserDateTime(
-                            $values['editFrom'],
-                            $values['timeFrom'],
-                            FromFormat::UserDateTime
-                        )->formatDateTimeForDb();
+                    $time = $values['timeFrom'] ?? 'start';
+                    $parsed = dtHelper()->parseUserDateTime($values['editFrom'], $time);
+                    if ($parsed) {
+                        $values['editFrom'] = $parsed->formatDateTimeForDb();
                         unset($values['timeFrom']);
-                    } else {
-                        $values['editFrom'] = dtHelper()->parseUserDateTime(
-                            $values['editFrom'],
-                            'start'
-                        )->formatDateTimeForDb();
                     }
                 }
             } catch (\Exception $e) {
-                // Keep original value if parsing fails
+                error_log("EditFrom Parsing Error: " . $e->getMessage() . " for value: " . $values['editFrom']);
             }
         }
 
@@ -3542,22 +3529,16 @@ class Tickets
                 if ($values['editTo'] instanceof CarbonImmutable) {
                     $values['editTo'] = $values['editTo']->formatDateTimeForDb();
                 } else {
-                    if (isset($values['timeTo']) && $values['timeTo'] != null) {
-                        $values['editTo'] = dtHelper()->parseUserDateTime(
-                            $values['editTo'],
-                            $values['timeTo']
-                        )->formatDateTimeForDb();
+                    $time = $values['timeTo'] ?? 'end';
+                    $parsed = dtHelper()->parseUserDateTime($values['editTo'], $time);
+                    if ($parsed) {
+                        $values['editTo'] = $parsed->formatDateTimeForDb();
                         unset($values['timeTo']);
-                    } else {
-                        $values['editTo'] = dtHelper()->parseUserDateTime(
-                            $values['editTo'],
-                            'end'
-                        )->formatDateTimeForDb();
                     }
                 }
 
             } catch (\Exception $e) {
-                // Keep original value if parsing fails
+                error_log("EditTo Parsing Error: " . $e->getMessage() . " for value: " . $values['editTo']);
             }
 
         }
