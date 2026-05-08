@@ -62,12 +62,27 @@ class GoogleCallback extends Controller
             $user = $this->userRepo->getUser($userId);
         }
 
+        // Ensure we have all required keys for editUser repository method
+        if (!isset($user['user']) && isset($user['username'])) {
+            $user['user'] = $user['username'];
+        }
+
         // Store tokens for later sync (Calendar/Tasks)
-        $settings = $user['settings'] ? unserialize($user['settings']) : [];
+        $settings = !empty($user['settings']) ? unserialize($user['settings']) : [];
+        if (!is_array($settings)) {
+            $settings = [];
+        }
+        
         $settings['google_token'] = $googleUser->token;
         $settings['google_refresh_token'] = $googleUser->refreshToken;
         $settings['google_expires_in'] = $googleUser->expiresIn;
+        
         $user['settings'] = serialize($settings);
+        
+        // Final check for editUser compatibility
+        $user['phone'] = $user['phone'] ?? '';
+        $user['clientId'] = $user['clientId'] ?? 0;
+        
         $this->userRepo->editUser($user, $user['id']);
 
         $this->authService->setUserSession($user, true);
