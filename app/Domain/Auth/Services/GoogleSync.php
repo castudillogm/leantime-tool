@@ -20,14 +20,23 @@ class GoogleSync
     /**
      * Synchronizes a ticket to Google Tasks and Google Calendar.
      *
-     * @param int $userId The ID of the user.
-     * @param array $ticket The ticket data.
+     * @param array $payload The event payload containing the ticket entity.
      * @return void
      */
-    public function syncTicketToGoogle(int $userId, array $ticket): void
+    public function syncTicketToGoogle(array $payload): void
     {
+        $ticket = $payload['entity'] ?? null;
+        if (!$ticket) {
+            return;
+        }
+
+        $userId = session('userdata.id');
+        if (!$userId) {
+            return;
+        }
+
         $user = $this->userRepo->getUser($userId);
-        if (!$user || !isset($user['settings'])) {
+        if (!$user || empty($user['settings'])) {
             return;
         }
 
