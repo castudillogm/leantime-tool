@@ -25,31 +25,43 @@ class GoogleSync
      */
     public function syncTicketToGoogle(array $payload): void
     {
+        error_log("GoogleSync Triggered for Ticket: " . ($payload['entity']['id'] ?? 'unknown'));
+        
         $ticket = $payload['entity'] ?? null;
         if (!$ticket) {
+            error_log("GoogleSync Error: No ticket entity in payload");
             return;
         }
 
         $userId = session('userdata.id');
         if (!$userId) {
+            error_log("GoogleSync Error: No userId in session");
             return;
         }
 
         $user = $this->userRepo->getUser($userId);
-        if (!$user || empty($user['settings'])) {
+        if (!$user) {
+            error_log("GoogleSync Error: User not found for ID: " . $userId);
             return;
         }
 
         $settings = $user['settings'] ? unserialize($user['settings']) : [];
+        if (empty($settings)) {
+            error_log("GoogleSync Error: No settings found for user: " . $userId);
+        }
 
         if (!isset($settings['google_token'])) {
+            error_log("GoogleSync Error: google_token not set for user: " . $userId);
             return;
         }
 
         $accessToken = $this->getValidToken($userId, $settings);
         if (!$accessToken) {
+            error_log("GoogleSync Error: Failed to obtain valid access token for user: " . $userId);
             return;
         }
+
+        error_log("GoogleSync: Attempting to push to Tasks and Calendar for user: " . $userId);
 
         // Sync to Google Tasks
         $this->pushToGoogleTasks($accessToken, $ticket);
@@ -58,6 +70,8 @@ class GoogleSync
         $dueDate = $ticket['hourToFinish'] ?? $ticket['dateToFinish'] ?? null;
         if ($dueDate && $dueDate != '0000-00-00 00:00:00') {
             $this->pushToGoogleCalendar($accessToken, $ticket);
+        } else {
+            error_log("GoogleSync: Skipping Calendar sync, no valid finish date found.");
         }
     }
 
