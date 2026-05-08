@@ -1984,10 +1984,9 @@ class Tickets
             // Update Ticket
             $addTicketResponse = $this->ticketRepository->addTicket($values);
 
-            self::dispatchEvent('ticket_created', ['entity' => $values]);
-
             if ($addTicketResponse !== false) {
                 $values['id'] = $addTicketResponse;
+                self::dispatchEvent('ticket_created', ['entity' => $values]);
                 $subject = sprintf($this->language->__('email_notifications.new_todo_subject'), $addTicketResponse, strip_tags($values['headline']));
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$addTicketResponse;
                 $message = sprintf($this->language->__('email_notifications.new_todo_message'), session('userdata.name'), strip_tags($values['headline']));

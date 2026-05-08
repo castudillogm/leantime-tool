@@ -14,11 +14,11 @@
 
 @dispatchEvent('afterMetaTags')
 
-<link rel="shortcut icon" href="{!! BASE_URL !!}/dist/images/favicon.png"/>
-<link rel="apple-touch-icon" href="{!! BASE_URL !!}/dist/images/apple-touch-icon.png">
+<link rel="shortcut icon" href="/dist/images/favicon.png"/>
+<link rel="apple-touch-icon" href="/dist/images/apple-touch-icon.png">
 
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/main.{!! $version !!}.min.css"/>
-<link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/app.{!! $version !!}.min.css"/>
+<link rel="stylesheet" href="/dist/css/main.{!! $version !!}.min.css"/>
+<link rel="stylesheet" href="/dist/css/app.{!! $version !!}.min.css"/>
 @if($tpl->needsComponent('tiptap'))
 <link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/tiptap-editor.{!! $version !!}.min.css"/>
 <link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/katex.min.css"/>
