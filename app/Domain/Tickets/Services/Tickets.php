@@ -3488,59 +3488,67 @@ class Tickets
         // Prepare dates for db
         if (! empty($values['dateToFinish'])) {
 
-            try {
-                if ($values['dateToFinish'] instanceof CarbonImmutable) {
-                    $values['dateToFinish'] = $values['dateToFinish']->formatDateTimeForDb();
-                } else {
-                    $time = $values['timeToFinish'] ?? 'end';
-                    $parsed = dtHelper()->parseUserDateTime($values['dateToFinish'], $time);
+            $dateStr = trim($values['dateToFinish']);
+            $timeStr = $values['timeToFinish'] ?? '23:59';
+            
+            // Manual parsing for d/m/Y
+            if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $dateStr, $matches)) {
+                $values['dateToFinish'] = sprintf('%04d-%02d-%02d %02d:%02d:00', $matches[3], $matches[2], $matches[1], 
+                    explode(':', $timeStr)[0] ?? 23, explode(':', $timeStr)[1] ?? 59);
+                unset($values['timeToFinish']);
+            } else {
+                try {
+                    $parsed = dtHelper()->parseUserDateTime($dateStr, $timeStr);
                     if ($parsed) {
                         $values['dateToFinish'] = $parsed->formatDateTimeForDb();
                         unset($values['timeToFinish']);
                     }
+                } catch (\Exception $e) {
+                    error_log("DateToFinish Parsing Error: " . $e->getMessage());
                 }
-            } catch (\Exception $e) {
-                error_log("DateToFinish Parsing Error: " . $e->getMessage() . " for value: " . $values['dateToFinish']);
             }
         }
 
         if (! empty($values['editFrom'])) {
+            $dateStr = trim($values['editFrom']);
+            $timeStr = $values['timeFrom'] ?? '00:00';
 
-            try {
-                if ($values['editFrom'] instanceof CarbonImmutable) {
-                    $values['editFrom'] = $values['editFrom']->formatDateTimeForDb();
-                } else {
-                    $time = $values['timeFrom'] ?? 'start';
-                    $parsed = dtHelper()->parseUserDateTime($values['editFrom'], $time);
+            if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $dateStr, $matches)) {
+                $values['editFrom'] = sprintf('%04d-%02d-%02d %02d:%02d:00', $matches[3], $matches[2], $matches[1], 
+                    explode(':', $timeStr)[0] ?? 0, explode(':', $timeStr)[1] ?? 0);
+                unset($values['timeFrom']);
+            } else {
+                try {
+                    $parsed = dtHelper()->parseUserDateTime($dateStr, $timeStr);
                     if ($parsed) {
                         $values['editFrom'] = $parsed->formatDateTimeForDb();
                         unset($values['timeFrom']);
                     }
+                } catch (\Exception $e) {
+                    error_log("EditFrom Parsing Error: " . $e->getMessage());
                 }
-            } catch (\Exception $e) {
-                error_log("EditFrom Parsing Error: " . $e->getMessage() . " for value: " . $values['editFrom']);
             }
         }
 
         if (! empty($values['editTo'])) {
+            $dateStr = trim($values['editTo']);
+            $timeStr = $values['timeTo'] ?? '23:59';
 
-            try {
-
-                if ($values['editTo'] instanceof CarbonImmutable) {
-                    $values['editTo'] = $values['editTo']->formatDateTimeForDb();
-                } else {
-                    $time = $values['timeTo'] ?? 'end';
-                    $parsed = dtHelper()->parseUserDateTime($values['editTo'], $time);
+            if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $dateStr, $matches)) {
+                $values['editTo'] = sprintf('%04d-%02d-%02d %02d:%02d:00', $matches[3], $matches[2], $matches[1], 
+                    explode(':', $timeStr)[0] ?? 23, explode(':', $timeStr)[1] ?? 59);
+                unset($values['timeTo']);
+            } else {
+                try {
+                    $parsed = dtHelper()->parseUserDateTime($dateStr, $timeStr);
                     if ($parsed) {
                         $values['editTo'] = $parsed->formatDateTimeForDb();
                         unset($values['timeTo']);
                     }
+                } catch (\Exception $e) {
+                    error_log("EditTo Parsing Error: " . $e->getMessage());
                 }
-
-            } catch (\Exception $e) {
-                error_log("EditTo Parsing Error: " . $e->getMessage() . " for value: " . $values['editTo']);
             }
-
         }
 
         return $values;
