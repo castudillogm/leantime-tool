@@ -25,43 +25,41 @@ class GoogleSync
      */
     public function syncTicketToGoogle(array $payload): void
     {
-        error_log("GoogleSync Triggered for Ticket: " . ($payload['entity']['id'] ?? 'unknown'));
+        $logFile = APP_ROOT . '/sync_debug.log';
+        $msg = "[" . date('Y-m-d H:i:s') . "] GoogleSync Triggered for Ticket: " . ($payload['entity']['id'] ?? 'unknown') . "\n";
+        file_put_contents($logFile, $msg, FILE_APPEND);
         
         $ticket = $payload['entity'] ?? null;
         if (!$ticket) {
-            error_log("GoogleSync Error: No ticket entity in payload");
+            file_put_contents($logFile, "GoogleSync Error: No ticket entity in payload\n", FILE_APPEND);
             return;
         }
 
         $userId = session('userdata.id');
         if (!$userId) {
-            error_log("GoogleSync Error: No userId in session");
+            file_put_contents($logFile, "GoogleSync Error: No userId in session\n", FILE_APPEND);
             return;
         }
 
         $user = $this->userRepo->getUser($userId);
         if (!$user) {
-            error_log("GoogleSync Error: User not found for ID: " . $userId);
+            file_put_contents($logFile, "GoogleSync Error: User not found for ID: " . $userId . "\n", FILE_APPEND);
             return;
         }
 
         $settings = $user['settings'] ? unserialize($user['settings']) : [];
-        if (empty($settings)) {
-            error_log("GoogleSync Error: No settings found for user: " . $userId);
-        }
-
         if (!isset($settings['google_token'])) {
-            error_log("GoogleSync Error: google_token not set for user: " . $userId);
+            file_put_contents($logFile, "GoogleSync Error: google_token not set for user: " . $userId . "\n", FILE_APPEND);
             return;
         }
 
         $accessToken = $this->getValidToken($userId, $settings);
         if (!$accessToken) {
-            error_log("GoogleSync Error: Failed to obtain valid access token for user: " . $userId);
+            file_put_contents($logFile, "GoogleSync Error: Failed to obtain valid access token for user: " . $userId . "\n", FILE_APPEND);
             return;
         }
 
-        error_log("GoogleSync: Attempting to push to Tasks and Calendar for user: " . $userId);
+        file_put_contents($logFile, "GoogleSync: Attempting to push to Tasks and Calendar for user: " . $userId . "\n", FILE_APPEND);
 
         // Sync to Google Tasks
         $this->pushToGoogleTasks($accessToken, $ticket);
@@ -71,7 +69,7 @@ class GoogleSync
         if ($dueDate && $dueDate != '0000-00-00 00:00:00') {
             $this->pushToGoogleCalendar($accessToken, $ticket);
         } else {
-            error_log("GoogleSync: Skipping Calendar sync, no valid finish date found.");
+            file_put_contents($logFile, "GoogleSync: Skipping Calendar sync, no valid finish date found.\n", FILE_APPEND);
         }
     }
 

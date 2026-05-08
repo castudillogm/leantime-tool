@@ -40,3 +40,15 @@ EventDispatcher::add_event_listener(
     [GoogleSync::class, 'syncTicketToGoogle'],
     5
 );
+
+EventDispatcher::add_event_listener(
+    'leantime.*.tickets.*.ticket_created',
+    [GoogleSync::class, 'syncTicketToGoogle'],
+    5
+);
+
+EventDispatcher::add_event_listener(
+    'leantime.*.tickets.*.ticket_updated',
+    [GoogleSync::class, 'syncTicketToGoogle'],
+    5
+);
