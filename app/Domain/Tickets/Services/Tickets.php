@@ -3506,8 +3506,7 @@ class Tickets
                     }
                 }
             } catch (\Exception $e) {
-                $values['dateToFinish'] = '';
-                unset($values['timeToFinish']);
+                // Keep original value if parsing fails
             }
         }
 
@@ -3532,8 +3531,7 @@ class Tickets
                     }
                 }
             } catch (\Exception $e) {
-                $values['editFrom'] = '';
-                unset($values['timeFrom']);
+                // Keep original value if parsing fails
             }
         }
 
@@ -3559,8 +3557,7 @@ class Tickets
                 }
 
             } catch (\Exception $e) {
-                $values['editTo'] = '';
-                unset($values['timeTo']);
+                // Keep original value if parsing fails
             }
 
         }
