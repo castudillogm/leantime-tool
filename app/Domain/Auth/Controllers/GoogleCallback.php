@@ -49,13 +49,16 @@ class GoogleCallback extends Controller
                 'firstname' => $googleUser->offsetGet('given_name') ?? $googleUser->getName(),
                 'lastname' => $googleUser->offsetGet('family_name') ?? '',
                 'user' => $googleUser->getEmail(),
-                'role' => 'editor', // Default role
-                'password' => '',
-                'clientId' => '',
+                'role' => 20, // Numeric role (Editor)
+                'password' => bin2hex(random_bytes(16)), // Generate a random password for SSO users
+                'clientId' => 0,
                 'source' => 'google',
                 'status' => 'a',
             ];
             $userId = $this->userRepo->addUser($userArray);
+            if (!$userId) {
+                throw new \Exception("Failed to create user in database");
+            }
             $user = $this->userRepo->getUser($userId);
         }
 
