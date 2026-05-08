@@ -55,7 +55,8 @@ class GoogleSync
         $this->pushToGoogleTasks($accessToken, $ticket);
 
         // Sync to Google Calendar if it has a due date
-        if (isset($ticket['dateToFinish']) && $ticket['dateToFinish'] != '0000-00-00 00:00:00' && !empty($ticket['dateToFinish'])) {
+        $dueDate = $ticket['hourToFinish'] ?? $ticket['dateToFinish'] ?? null;
+        if ($dueDate && $dueDate != '0000-00-00 00:00:00') {
             $this->pushToGoogleCalendar($accessToken, $ticket);
         }
     }
@@ -65,9 +66,8 @@ class GoogleSync
      */
     private function getValidToken(int $userId, array $settings): ?string
     {
-        // For simplicity in this version, we'll check if we have a refresh token and just try to use it if the current one is likely expired.
-        // A more robust implementation would check 'google_expires_in' vs time().
-        
+        // Check if token is expired or about to expire (expires_in is usually 3600)
+        // For now, if we have a refresh token, let's try to get a fresh access token to be safe
         if (isset($settings['google_refresh_token'])) {
             try {
                 $response = $this->client->post('https://oauth2.googleapis.com/token', [
@@ -90,7 +90,7 @@ class GoogleSync
                     return $data['access_token'];
                 }
             } catch (\Exception $e) {
-                Log::error("Google Token Refresh Error: " . $e->getMessage());
+                error_log("Google Token Refresh Error: " . $e->getMessage());
             }
         }
 
@@ -103,6 +103,12 @@ class GoogleSync
     private function pushToGoogleTasks(string $token, array $ticket): void
     {
         try {
+            $dueDate = $ticket['hourToFinish'] ?? $ticket['dateToFinish'] ?? null;
+            $dueRFC = null;
+            if ($dueDate && $dueDate != '0000-00-00 00:00:00') {
+                $dueRFC = date('Y-m-d\TH:i:s\Z', strtotime($dueDate));
+            }
+
             $response = $this->client->post('https://www.googleapis.com/tasks/v1/lists/@default/tasks', [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $token,
@@ -111,15 +117,11 @@ class GoogleSync
                 'json' => [
                     'title' => '[Lean Tool] ' . ($ticket['headline'] ?? 'Nueva Tarea'),
                     'notes' => strip_tags($ticket['description'] ?? ''),
-                    'due' => !empty($ticket['dateToFinish']) ? date('Y-m-d\TH:i:s\Z', strtotime($ticket['dateToFinish'])) : null,
+                    'due' => $dueRFC,
                 ]
             ]);
-            
-            if ($response->getStatusCode() !== 201) {
-                Log::warning("Google Tasks Sync: Unexpected status code " . $response->getStatusCode());
-            }
         } catch (\Exception $e) {
-            Log::error("Google Tasks Sync Error: " . $e->getMessage());
+            error_log("Google Tasks Sync Error: " . $e->getMessage());
         }
     }
 
@@ -129,10 +131,22 @@ class GoogleSync
     private function pushToGoogleCalendar(string $token, array $ticket): void
     {
         try {
-            $startTime = date('Y-m-d\TH:i:s\Z', strtotime($ticket['dateToFinish']));
-            $endTime = date('Y-m-d\TH:i:s\Z', strtotime($ticket['dateToFinish']) + 3600);
+            $finishDate = $ticket['hourToFinish'] ?? $ticket['dateToFinish'] ?? null;
+            $startDate = $ticket['hourToStart'] ?? $ticket['dateToStart'] ?? $finishDate;
 
-            $response = $this->client->post('https://www.googleapis.com/calendar/v3/calendars/primary/events', [
+            if (!$finishDate || $finishDate == '0000-00-00 00:00:00') {
+                return;
+            }
+
+            $startTime = date('Y-m-d\TH:i:s\Z', strtotime($startDate));
+            $endTime = date('Y-m-d\TH:i:s\Z', strtotime($finishDate));
+
+            // If same time, add 1 hour to end
+            if ($startTime == $endTime) {
+                $endTime = date('Y-m-d\TH:i:s\Z', strtotime($finishDate) + 3600);
+            }
+
+            $this->client->post('https://www.googleapis.com/calendar/v3/calendars/primary/events', [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $token,
                     'Content-Type' => 'application/json',
@@ -144,12 +158,8 @@ class GoogleSync
                     'end' => ['dateTime' => $endTime],
                 ]
             ]);
-
-            if ($response->getStatusCode() !== 200) {
-                Log::warning("Google Calendar Sync: Unexpected status code " . $response->getStatusCode());
-            }
         } catch (\Exception $e) {
-            Log::error("Google Calendar Sync Error: " . $e->getMessage());
+            error_log("Google Calendar Sync Error: " . $e->getMessage());
         }
     }
 }
