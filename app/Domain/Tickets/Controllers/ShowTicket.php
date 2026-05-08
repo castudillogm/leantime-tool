@@ -229,11 +229,6 @@ class ShowTicket extends Controller
             //            $params['projectId'] = $ticket->projectId;
             $params['id'] = $id;
 
-            // Prepare values, time comes in as 24hours from time input. Service expects time to be in local user format
-            $params['timeToFinish'] = format(value: $params['timeToFinish'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
-            $params['timeFrom'] = format(value: $params['timeFrom'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
-            $params['timeTo'] = format(value: $params['timeTo'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
-
             $result = $this->ticketService->updateTicket($params);
 
             if ($result === true) {

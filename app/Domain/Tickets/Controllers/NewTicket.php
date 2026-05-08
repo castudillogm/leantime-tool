@@ -108,11 +108,6 @@ class NewTicket extends Controller
     public function post($params): Response
     {
         if (isset($params['saveTicket']) || isset($params['saveAndCloseTicket'])) {
-
-            $params['timeToFinish'] = format(value: $params['timeToFinish'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
-            $params['timeFrom'] = format(value: $params['timeFrom'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
-            $params['timeTo'] = format(value: $params['timeTo'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
-
             $result = $this->ticketService->addTicket($params);
 
             if (is_array($result) === false) {
