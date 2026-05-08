@@ -3492,11 +3492,11 @@ class Tickets
             $timeStr = $values['timeToFinish'] ?? '23:59';
             $userTz = session('usersettings.timezone') ?? 'UTC';
             
-            // Manual parsing for d/m/Y with Timezone awareness
+            // Manual parsing for d/m/Y - Store exactly as user sees it to prevent double-offset issues
             if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $dateStr, $matches)) {
                 try {
                     $localDate = \Carbon\CarbonImmutable::createFromFormat('d/m/Y H:i', sprintf('%02d/%02d/%04d %s', $matches[1], $matches[2], $matches[3], $timeStr), $userTz);
-                    $values['dateToFinish'] = $localDate->setTimezone('UTC')->format('Y-m-d H:i:s');
+                    $values['dateToFinish'] = $localDate->format('Y-m-d H:i:s');
                     unset($values['timeToFinish']);
                 } catch (\Exception $e) {
                     error_log("Manual DateToFinish Parsing Error: " . $e->getMessage());
@@ -3505,7 +3505,7 @@ class Tickets
                 try {
                     $parsed = dtHelper()->parseUserDateTime($dateStr, $timeStr);
                     if ($parsed) {
-                        $values['dateToFinish'] = $parsed->formatDateTimeForDb();
+                        $values['dateToFinish'] = $parsed->format('Y-m-d H:i:s');
                         unset($values['timeToFinish']);
                     }
                 } catch (\Exception $e) {
@@ -3522,7 +3522,7 @@ class Tickets
             if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $dateStr, $matches)) {
                 try {
                     $localDate = \Carbon\CarbonImmutable::createFromFormat('d/m/Y H:i', sprintf('%02d/%02d/%04d %s', $matches[1], $matches[2], $matches[3], $timeStr), $userTz);
-                    $values['editFrom'] = $localDate->setTimezone('UTC')->format('Y-m-d H:i:s');
+                    $values['editFrom'] = $localDate->format('Y-m-d H:i:s');
                     unset($values['timeFrom']);
                 } catch (\Exception $e) {
                     error_log("Manual EditFrom Parsing Error: " . $e->getMessage());
@@ -3531,7 +3531,7 @@ class Tickets
                 try {
                     $parsed = dtHelper()->parseUserDateTime($dateStr, $timeStr);
                     if ($parsed) {
-                        $values['editFrom'] = $parsed->formatDateTimeForDb();
+                        $values['editFrom'] = $parsed->format('Y-m-d H:i:s');
                         unset($values['timeFrom']);
                     }
                 } catch (\Exception $e) {
@@ -3548,7 +3548,7 @@ class Tickets
             if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $dateStr, $matches)) {
                 try {
                     $localDate = \Carbon\CarbonImmutable::createFromFormat('d/m/Y H:i', sprintf('%02d/%02d/%04d %s', $matches[1], $matches[2], $matches[3], $timeStr), $userTz);
-                    $values['editTo'] = $localDate->setTimezone('UTC')->format('Y-m-d H:i:s');
+                    $values['editTo'] = $localDate->format('Y-m-d H:i:s');
                     unset($values['timeTo']);
                 } catch (\Exception $e) {
                     error_log("Manual EditTo Parsing Error: " . $e->getMessage());
@@ -3557,7 +3557,7 @@ class Tickets
                 try {
                     $parsed = dtHelper()->parseUserDateTime($dateStr, $timeStr);
                     if ($parsed) {
-                        $values['editTo'] = $parsed->formatDateTimeForDb();
+                        $values['editTo'] = $parsed->format('Y-m-d H:i:s');
                         unset($values['timeTo']);
                     }
                 } catch (\Exception $e) {
