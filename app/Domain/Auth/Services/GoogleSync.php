@@ -103,13 +103,17 @@ class GoogleSync
     private function pushToGoogleTasks(string $token, array $ticket): void
     {
         try {
-            $dueDate = $ticket['hourToFinish'] ?? $ticket['dateToFinish'] ?? null;
+            // Prioritize dateToFinish (Deadline) for Google Tasks
+            $dueDate = !empty($ticket['dateToFinish']) && $ticket['dateToFinish'] != '0000-00-00 00:00:00' 
+                ? $ticket['dateToFinish'] 
+                : ($ticket['hourToFinish'] ?? null);
+            
             $dueRFC = null;
             if ($dueDate && $dueDate != '0000-00-00 00:00:00') {
                 $dueRFC = date('Y-m-d\TH:i:s\Z', strtotime($dueDate));
             }
 
-            $response = $this->client->post('https://www.googleapis.com/tasks/v1/lists/@default/tasks', [
+            $this->client->post('https://www.googleapis.com/tasks/v1/lists/@default/tasks', [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $token,
                     'Content-Type' => 'application/json',
@@ -131,7 +135,11 @@ class GoogleSync
     private function pushToGoogleCalendar(string $token, array $ticket): void
     {
         try {
-            $finishDate = $ticket['hourToFinish'] ?? $ticket['dateToFinish'] ?? null;
+            // Prioritize dateToFinish (Deadline) for Calendar
+            $finishDate = !empty($ticket['dateToFinish']) && $ticket['dateToFinish'] != '0000-00-00 00:00:00' 
+                ? $ticket['dateToFinish'] 
+                : ($ticket['hourToFinish'] ?? null);
+                
             $startDate = $ticket['hourToStart'] ?? $ticket['dateToStart'] ?? $finishDate;
 
             if (!$finishDate || $finishDate == '0000-00-00 00:00:00') {
@@ -141,9 +149,9 @@ class GoogleSync
             $startTime = date('Y-m-d\TH:i:s\Z', strtotime($startDate));
             $endTime = date('Y-m-d\TH:i:s\Z', strtotime($finishDate));
 
-            // If same time, add 1 hour to end
-            if ($startTime == $endTime) {
-                $endTime = date('Y-m-d\TH:i:s\Z', strtotime($finishDate) + 3600);
+            // If same time or end before start, add 1 hour to end
+            if (strtotime($endTime) <= strtotime($startTime)) {
+                $endTime = date('Y-m-d\TH:i:s\Z', strtotime($startTime) + 3600);
             }
 
             $this->client->post('https://www.googleapis.com/calendar/v3/calendars/primary/events', [
