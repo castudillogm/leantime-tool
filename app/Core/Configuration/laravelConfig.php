@@ -988,7 +988,7 @@ return [
         'google' => [
             'client_id' => $_ENV['LEAN_GOOGLE_CLIENT_ID'] ?? $_SERVER['LEAN_GOOGLE_CLIENT_ID'] ?? env('LEAN_GOOGLE_CLIENT_ID'),
             'client_secret' => $_ENV['LEAN_GOOGLE_CLIENT_SECRET'] ?? $_SERVER['LEAN_GOOGLE_CLIENT_SECRET'] ?? env('LEAN_GOOGLE_CLIENT_SECRET'),
-            'redirect' => $_ENV['LEAN_GOOGLE_REDIRECT_URI'] ?? $_SERVER['LEAN_GOOGLE_REDIRECT_URI'] ?? env('LEAN_GOOGLE_REDIRECT_URI', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]/auth/googleCallback"),
+            'redirect' => $_ENV['LEAN_GOOGLE_REDIRECT_URI'] ?? $_SERVER['LEAN_GOOGLE_REDIRECT_URI'] ?? env('LEAN_GOOGLE_REDIRECT_URI', (((isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'railway.app') !== false)) ? "https" : "http") . "://" . ($_SERVER['HTTP_HOST'] ?? 'localhost') . "/auth/googleCallback"),
         ],
     ],
 ];
